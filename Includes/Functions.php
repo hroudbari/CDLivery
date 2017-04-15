@@ -1,9 +1,5 @@
 <?php
-	function redirectTo($page)
-	{
-		header("Location: ".$page);
-		exit;
-	}
+
 	function findUser($username,$password)
 	{
 		$connection = mysqli_connect("localhost","cd_user","password","cd_livery");
@@ -51,7 +47,10 @@
 		}
 		return true;
 	}
-
+	function redirectTo($page)
+	{
+		header("Location: ".$page);
+	}
 	function validateLength($string)
 	{
 		if(strlen($string)>=5)
@@ -74,29 +73,22 @@
 			return true;
 		}
 	}
-	function newEntry($name,$genre,$visible,$stock,$releaseyear,$itemType)
+	function newEntry($name,$genre,$stock,$releaseyear,$visible,$price,$type)
 	{
 		$connection=mysqli_connect("localhost","cd_user","password","cd_livery");
 		if (mysqli_connect_errno())
 		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		if($itemType==0)
-		{
-			$sql="INSERT INTO albums (album_name,genre,visible,stock,release_year)VALUES
-			({$name},{$genre},{$visible},{$stock},{$releaseyear})";
+		else
+		{	
+			$query  = "INSERT INTO cds (";
+			$query .= "  name, type, genre, stock, releaseyear, visible, price";
+			$query .= ") VALUES (";
+			$query .= "'$_POST[name]','$_POST[type]','$_POST[genre]','$_POST[stock]','$_POST[releaseyear]','$_POST[visible]','$_POST[price]')";
+			$query .= ")";
 		}
-		if($itemType==1)
-		{
-			$sql="INSERT INTO movies (movie_name,genre,visible,stock,release_year)VALUES
-			({$name},{$genre},{$visible},{$stock},{$releaseyear})";
-		}
-		if($itemType==2)
-		{
-			$sql="INSERT INTO games (game_name,genre,visible,stock,release_year)VALUES";
-			$sql.=" ('{$name}','{$genre}',{$visible},{$stock},{$releaseyear})";
-		}
-		$result = mysqli_query($connection, $sql);
+		$result = mysqli_query($connection, $query);
 
 		if ($result && mysqli_affected_rows($connection) == 1) 
 		{
